@@ -7,7 +7,6 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
-#include "AppPages.h"
 using namespace std;
 // ======================================================================================================================
 
@@ -17,23 +16,27 @@ private:
 	string lastName;
 	string userName;
 	string passWord;
-	double userHourlyRate;
+
+
+	vector<string>specialDelimetedString(string ll, char limit);
+	vector<int>specialDelimetedInt(string ll, char limit);
+	vector<int> clockInInfo;
+	vector<int> clockOutInfo;
+	
 
 public:
+	void setFirstName(string nfn);
+	void setLastName(string nln);
+	void setPassWord(string npw);
+	void clockIn();
+	void clockOut();
 
-	User(string fn, string ln);
-	void setFirstName(string nf);
-	void setLastName(string nl);
-	void setUserName();
-	void setPassWord(string np);
 
-	//string getFirstName();
-	//string getLastName();
-	//string getUserName();
-	//string getPassword();
-
-	// others
-	//string generatePassWord();
-	string generateUserName();
+	string getFirstName();
+	string getLastName();
+	string getUserName();
+	string getPassWord();
+	double getWorkTimeDay();
+	void updateField(string fromFile,string toFile);
 };
 

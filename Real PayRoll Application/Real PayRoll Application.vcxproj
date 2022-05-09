@@ -140,11 +140,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppPages.cpp" />
+    <ClCompile Include="CalculateMeDateTime.cpp" />
     <ClCompile Include="Real PayRoll Application.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppPages.h" />
+    <ClInclude Include="CalculateMeDateTime.h" />
     <ClInclude Include="User.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

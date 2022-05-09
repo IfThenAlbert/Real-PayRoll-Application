@@ -1,3 +1,4 @@
+#define __STDC_WANT_LIB_EXT1__ 1
 #include "User.h"
 // import all libraries needed ========================================================================================
 #include <iostream>
@@ -7,38 +8,76 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <ctime>
 #include "AppPages.h"
 using namespace std;
-// ======================================================================================================================
 
 // constructor
-User::User(string fn, string ln) {
-	this->firstName = fn;
-	this->lastName = ln;
+
+
+// PRIVATE:: methods
+vector<string> User::specialDelimetedString(string ll, char limit) {
+	vector<string> res;
+	stringstream s_stream(ll);
+
+	while (s_stream.good()) {
+		string s;
+		getline(s_stream, s, limit);
+		res.push_back(s);
+	};
+	return res;
+};
+
+vector<int> User::specialDelimetedInt(string ll, char limit) {
+	vector<int> res;
+	stringstream s_stream(ll);
+
+	while (s_stream.good()) {
+		string s;
+		getline(s_stream, s, limit);
+		res.push_back(stoi(s));
+	};
+	return res;
+};
+
+// PUBLIC:: methods
+double  User::getWorkTimeDay() {
+	double result = 0.0;
+	vector<int> diffResult;
+	// hh mm ss
+	if (this->clockInInfo.at(2) > clockOutInfo.at(2)) // sec
+	{
+		--clockOutInfo.at(1); // min
+		clockOutInfo.at(2) += 60; //sec
+	}
+
+	diffResult.push_back(clockOutInfo.at(2) - this->clockInInfo.at(2));
+	if (this->clockInInfo.at(1) > clockOutInfo.at(1))
+	{
+		--clockOutInfo.at(0);
+		clockOutInfo.at(1) += 60;
+	}
+	diffResult.push_back(clockOutInfo.at(1) - this->clockInInfo.at(1));
+	diffResult.push_back(clockOutInfo.at(0) - this->clockInInfo.at(0));
+	result = diffResult.at(2) + (diffResult.at(1) * (1 / 60)) + (diffResult.at(0) * (1 / 3600));
+	
+	return result;
 }
 
-// setters
-void User::setFirstName(string nf) {
-	this->firstName = nf;
-};
+// methods for employee mger to clock in and out
+void User::clockIn() {
+	char str[26];
+	time_t result = time(NULL);
+	ctime_s(str, sizeof str, &result);
+	this->clockInInfo = this->specialDelimetedInt(this->specialDelimetedString(str, ' ').at(4), ':');
+	
+}
 
-void User::setLastName(string nl) {
-	this->lastName = nl;
-};
-
-
-string User::generateUserName() {
-	string result = "";
-	result = this->firstName.substr(3) + "_000";
-	return result;
-};
-
-void User::setUserName() {
-	this->userName = this->generateUserName();
-};
-
-void User::setPassWord(string np) {
-	this->passWord = np;
-};
+void User::clockOut() {
+	char str[26];
+	time_t result = time(NULL);
+	ctime_s(str, sizeof str, &result);
+	this->clockOutInfo = this->specialDelimetedInt(this->specialDelimetedString(str, ' ').at(4), ':');
+}
 
 
