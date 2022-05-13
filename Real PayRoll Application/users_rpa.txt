@@ -1,3 +1,1 @@
-hello,world,manager,20,helloww,ww123,M123M
-asd,asd,manager,50,a123,s123,M123M
-asdf,asf,crew,20,asdfasf,albert123,asd
+albert,ang,M,crew,16.00,monthly,a123,b123,M123M,0.0

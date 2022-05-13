@@ -1,3 +1,4 @@
+#define __STDC_WANT_LIB_EXT1__ 1
 #include "AppPages.h"
 // import all libraries needed ========================================================================================
 #include <iostream>
@@ -65,6 +66,7 @@ void AppPages::showLogInPage() {
 	cin >> passWord;
 
 	system("CLS");
+
 	if (userFilesReader.is_open()) {
 		string lined; // store the value of each line
 
@@ -72,7 +74,7 @@ void AppPages::showLogInPage() {
 		while (getline(userFilesReader, lined)) {
 			vector<string> targetUser = this->commaDelimetedString(lined,',');  // store all the user creds here
 			
-			if ((userName._Equal(targetUser.at(4)) ) && (passWord._Equal(targetUser.at(5)))) {
+			if ((userName._Equal(targetUser.at(6)) ) && (passWord._Equal(targetUser.at(7)))) {
 				this->currentUser = targetUser;
 
 
@@ -88,7 +90,7 @@ void AppPages::showLogInPage() {
 		while (getline(employeeFilesReader, lined)) {
 			vector<string> targetUser = this->commaDelimetedString(lined,',');  // store all the user creds here
 
-			if ((userName._Equal(targetUser.at(4))) && (passWord._Equal(targetUser.at(5)))) {
+			if ((userName._Equal(targetUser.at(6))) && (passWord._Equal(targetUser.at(7)))) {
 				this->currentUser = targetUser;
 				if (passWord == "app123") {
 					this->showOneTime();
@@ -99,6 +101,7 @@ void AppPages::showLogInPage() {
 		};
 		this->showMainPage();
 	};
+	
 
 };
 
@@ -213,20 +216,21 @@ void AppPages::showManagerPage() {
 	system("CLS");
 	if (managerChoice == 1) {
 		int isFinish = 1;
-		string employeeFirst;
-		string employeeLast;
-		double employeeHourlyRate;
+		string employeeFirst = "";
+		string employeeLast = "";
+		double employeeHourlyRate = .0;
 		string newEmpUser = "";
-		string employeeTitle;
-		string employeeUser, employeePass;
-		int paidOption;
-		string vv;
+		string employeeTitle = "";
+		string employeeUser = "", employeePass = "";
+		int paidOption = 0;
+		string marriedSingle = "";
+		string vv = "";
 		
 		ofstream createEmployee;
 		createEmployee.open("tmp_users_rpa.txt",ios::app);
 
 		while (isFinish == 1) {
-			int weekDay, monthlyPayDay;
+			int weekDay = 0, monthlyPayDay = 0;
 			system("CLS");
 			cout << "@@=================================================@@" << endl;
 			cout << setw(35) << "ADD NEW EMPLOYEE" << endl;
@@ -242,6 +246,10 @@ void AppPages::showManagerPage() {
 			cout << "Employee Username: " << employeeUser << endl; 
 			cout << "Temporrary Log In Password: app123" << endl;
 			employeePass = "app123";
+		
+			cout << "Married or Single: ";
+			cin >> marriedSingle;
+
 
 			cout << "Employee Title: ";
 			cin >> employeeTitle;
@@ -285,8 +293,10 @@ void AppPages::showManagerPage() {
 		if (createEmployee.is_open()) {
 			// Manager under,First,Last,hourly,username,password
 			
-			createEmployee << employeeFirst << "," << employeeLast << "," << employeeTitle << "," <<
-				employeeHourlyRate << "," << paidOption << "," << vv << "," << employeeUser << "," << employeePass << "," << this->currentUser[0] << endl;
+			// FIRST NAME, LAST NAME, MARRIED/SINGLE, TITLE, RATE, M/W, USERNAME, PASSWORD
+			
+			createEmployee << employeeFirst << "," << employeeLast << "," << marriedSingle << "," <<
+				employeeTitle << "," << employeeHourlyRate << "," << vv << "," << employeeUser << "," << employeePass << "," << currentUser[0];
 			createEmployee.close();
 			system("CLS");
 			cout << "AN EMPLOYEE HAS BEEN ADDED!!!" << endl;
@@ -302,9 +312,9 @@ void AppPages::showManagerPage() {
 			string data;
 			while (getline(employeeView, data)) {
 				vector<string> employeeInfo = commaDelimetedString(data,',');
-				if (employeeInfo[6] == currentUser[0]) {
-					cout << "Employee Name: " << employeeInfo[0] << " Last Name: " << employeeInfo[1] << " [" << employeeInfo[2] << "] $" << employeeInfo[3] << endl;
-				};
+				//if (employeeInfo[6] == currentUser[0]) {
+				//	cout << "Employee Name: " << employeeInfo[0] << " Last Name: " << employeeInfo[1] << " [" << employeeInfo[2] << "] $" << employeeInfo[3] << endl;
+				//};
 			};
 		};
 		employeeView.close();
@@ -313,7 +323,7 @@ void AppPages::showManagerPage() {
 		this->showManagerPage();
 	}
 	else {
-		this->currentUser.clear();
+		//this->currentUser.clear();
 		this->showMainPage();
 	};
 
@@ -324,7 +334,7 @@ void AppPages::showManagerPage() {
 	DEVELOP BY: ENMANUEL, ALBERT
 	This method is to show the screen for the logged in employee
 */
-void AppPages::showEmployeePage() { 
+void AppPages::showEmployeePage() {
 
 	int choice = 0;
 	int exitChoice = 0;
@@ -332,19 +342,19 @@ void AppPages::showEmployeePage() {
 	string passwordCheck;
 	string newPassword;
 	string newPasswordCheck;
-	string oldPassword = currentUser[5];
+	//string oldPassword = currentUser[5];
 
 
 	while (choice != 1 && choice != 2) { // shows employee information
-		vector<int> cd = this->getCurrentDate();
+		//vector<int> cd = this->getCurrentDate();
 		system("CLS");
 		cout << "@@=================================================@@" << endl;
 		cout << setw(35) << "Employee Page" << endl;
 		cout << endl;
 		cout << "\tEmployee name: " << currentUser[0] << " " << currentUser[1] << endl;
-		cout << "\tEmployee title: " << currentUser[2] << endl;
-		cout << "\tEmployee Hourly Wage: $" << currentUser[3] << endl;
-		cout << "\tEmployee Username: " << currentUser[4] << endl;
+		cout << "\tEmployee title: " << currentUser[3] << endl;
+		cout << "\tEmployee Hourly Wage: $" << currentUser[4] << endl;
+		cout << "\tEmployee Username: " << currentUser[6] << endl;
 		cout << endl;
 		cout << endl;
 
@@ -359,21 +369,96 @@ void AppPages::showEmployeePage() {
 
 
 	if (choice == 1) {
-		this->clockInInfo = getCurrentDate(); //commaDelimetedInt(commaDelimetedString(str, ' ').at(4), ':');
+		this->clockInInfo = getCurrentTime(); 
+		string dummy = "";
+		cin >> dummy;
+		this->clockOutInfo = getCurrentTime();
+		cout << this->clockInInfo.at(1) << " -> " << this->clockOutInfo.at(1);
+		//double total = hoursThisShift + stod(currentUser.at(9));
+		//string data = to_string(total);
+		/*string employeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
+			"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
+			"," + currentUser.at(9);
+
+		string newEmployeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
+			"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
+			"," + data;
+
+
+		ifstream employeeReder;
+		vector<string> archive;
+		employeeReder.open("users_rpa.txt");
+		string line = "";
+		while (getline(employeeReder, line)) {
+			if (line != employeeInfo) {
+				archive.push_back(line);
+			};
+		};
+		employeeReder.close();
+		ofstream employeeReWriter;
+		employeeReWriter.open("users_rpa.txt");
+
+		if (archive.size() <= 0) {
+			employeeReWriter << "";
+		}
+		else {
+			for (int i = 0; i < archive.size(); i++) {
+				employeeReWriter << archive.at(i) << endl;
+			};
+		};
+		employeeReWriter.close();
+
+		cout << "HAVE A GOOD DAY THERE CREW !!!!" << endl;
+		isClockedIn = false;
+
 		isClockedIn = true;
+		*/
 	};
 
 	if (choice == 2) {
 		if (isClockedIn != false) {
-			this->clockOutInfo = getCurrentDate();
-			double earnedTHisShift = stod(currentUser[3]) * 5;
-			
+			this->clockOutInfo = getCurrentTime();
+			double hoursThisShift = this->computeWorkedHours(this->clockOutInfo,this->clockInInfo);
+			double total = hoursThisShift + stod(currentUser.at(9));
+			string data = "" + data;
+			string employeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
+				"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
+				"," + currentUser.at(9);
+
+			string newEmployeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
+				"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
+				"," +  data;
+
+
+			ifstream employeeReder;
+			vector<string> archive;
+			employeeReder.open("users_rpa.txt");
+			string line = "";
+			while (getline(employeeReder, line)) {
+				if (line != employeeInfo) {
+					archive.push_back(line);
+				};
+			};
+			employeeReder.close();
+			ofstream employeeReWriter;
+			employeeReWriter.open("users_rpa.txt");
+
+			if (archive.size() <= 0) {
+				employeeReWriter << "";
+			}
+			else {
+				for (int i = 0; i < archive.size(); i++) {
+					employeeReWriter << archive.at(i) << endl;
+				};
+			};
+
+			cout << "HAVE A GOOD DAY THERE CREW !!!!" << endl;
 			isClockedIn = false;
 		};
 	};
 
 	if (choice == 3) {
-
+		string oldPassword = "C";
 
 		do { // changing password algorithm
 			system("CLS");
@@ -381,7 +466,7 @@ void AppPages::showEmployeePage() {
 			cin >> passwordCheck;
 
 			if (passwordCheck.compare(oldPassword) != 0) {
-
+			
 				cout << "Passwords do not match, try again." << endl;
 				cout << endl;
 				system("pause");
@@ -435,7 +520,6 @@ void AppPages::showEmployeePage() {
 	};
 };
 
-
 // <OTHERS> 
 vector<string> AppPages::commaDelimetedString(string ll, char limit) {
 	vector<string> res;
@@ -461,15 +545,164 @@ vector<int> AppPages::commaDelimetedInt(string ll, char limit) {
 	return res;
 };
 
-vector<int> AppPages::getCurrentDate() {
+vector<int> AppPages::getCurrentTime() {
 	vector<int> results;
 	char str[26];
 	time_t result = time(NULL);
 	ctime_s(str, sizeof str, &result);
 	results = commaDelimetedInt(commaDelimetedString(str,' ').at(4), ':');
+	return results;
 }
 
+double AppPages::computeWorkedHours(vector<int> clockOut, vector<int> clockIn) {
+	double result;
+	vector<double> diffResult;
+	// hh mm ss
+	if (clockIn.at(2) > clockOut.at(2)) // sec
+	{
+		--clockOut.at(1); // min
+		clockOut.at(2) += 60; //sec
+	}
 
-void AppPages::updateField(string lineToChange, int pos, string data, string  fromF, string toF) {
-
+	diffResult.push_back(clockOut.at(2) - clockIn.at(2));
+	if (clockIn.at(1) > clockOut.at(1))
+	{
+		--clockOut.at(0);
+		clockOut.at(1) += 60;
+	}
+	diffResult.push_back(clockOut.at(1) - clockIn.at(1));
+	diffResult.push_back(clockOut.at(0) - clockIn.at(0));
+	result = diffResult.at(2) +  (diffResult.at(1) * (1 / 60)) + (diffResult.at(0) * (1 / 3600));
+	return result;
 };
+
+void AppPages::calcuteNetPay(bool isMarried) {
+	double calculatedGross = 200.00;
+	double calculatedNet = 0.0;
+	double IncomePercent, incomeO;
+	double FederalPercent, federalO;
+	const double  SOCIALPERCENT = 0.062;
+	const double  MEDICAREPERCENT = 0.0145;
+	const double FAMILYLEAVE = .00511;
+	const double DIS = .005;
+
+	// logic for income tax
+	if ((calculatedGross >= 0.0) && (calculatedGross <= 8500.00)) {
+		IncomePercent = 0.04;
+		incomeO = calculatedGross - (IncomePercent * calculatedGross);
+
+	}
+	else if ((calculatedGross >= 8501.0) && (calculatedGross <= 11700.00)) {
+		IncomePercent = .045; //350 + 4.5% of  (gross - 8500 )
+		incomeO = calculatedGross - (350 + (IncomePercent * (calculatedGross - 8500)));
+	}
+	else if ((calculatedGross >= 11701.0) && (calculatedGross <= 13900.00)) {
+		IncomePercent = 0.0525; // 484 + 5.25% of (gross - 11700)
+		incomeO = calculatedGross - (484 + (IncomePercent * (calculatedGross - 11700)));
+	}
+	else if ((calculatedGross >= 13901.0) && (calculatedGross <= 21400.00)) {
+		IncomePercent = .059; // 600 + 5.9% of (gross - 13900)
+		incomeO = calculatedGross - (600 + (IncomePercent * (calculatedGross - 13900)));
+	}
+	else if ((calculatedGross >= 21401.0) && (calculatedGross <= 80650.00)) {
+		IncomePercent = .0597; // 1042 + 5.97% of (gross - 21400)
+		incomeO = calculatedGross - (1042 + (IncomePercent * (calculatedGross - 21400)));
+	}
+	else if ((calculatedGross >= 80651.0) && (calculatedGross <= 215400.00)) {
+		IncomePercent = .0633; // 4579 + 6.33% of  (gross - 80650)
+		incomeO = calculatedGross - (4579 + (IncomePercent * (calculatedGross - 80650)));
+	}
+	else if ((calculatedGross >= 215401.0) && (calculatedGross <= 1077550.00)) {
+		IncomePercent = 0.0685; // 13109 + 6.85% of (gross - 215400)
+		incomeO = calculatedGross - (13109 + (IncomePercent * (calculatedGross - 215400)));
+	}
+	else if ((calculatedGross >= 1077550.0) && (calculatedGross <= 5000000.00)) {
+		IncomePercent = .0965; // 72166 + 9.65% of  (gross - 1077550)
+		incomeO = calculatedGross - (72166 + (IncomePercent * (calculatedGross - 1077550)));
+	}
+	else if ((calculatedGross >= 5000001.0) && (calculatedGross <= 25000000.00)) {
+		IncomePercent = .1030; //  450683 + 10.30% of (gross - 5000000)
+		incomeO = calculatedGross - (450683 + (IncomePercent * (calculatedGross - 5000000)));
+	}
+	else if ((calculatedGross >= 25000001.0)) {
+		IncomePercent = .1090; // 2510683 +  10.90% of  (grss - 25000000)
+		incomeO = calculatedGross - (2510683 + (IncomePercent * (calculatedGross - 25000000)));
+	};
+
+	//logic for federal tax  SINGLE
+	if (isMarried == false) {
+		if (calculatedGross < 10275.00) {
+			FederalPercent = 0.10;
+			federalO = (calculatedGross - (FederalPercent * calculatedGross));
+		}
+		else if ((calculatedGross > 10275.00) && (calculatedGross < 41775.00)) {
+			FederalPercent = 0.12; // 995 + 12% of (gross - 9950)
+			federalO = (calculatedGross - (1027.50 + (FederalPercent * (calculatedGross - 10275.00))));
+		}
+		else if ((calculatedGross > 41775.00) && (calculatedGross < 89075.00)) {
+			FederalPercent = 0.22; // 4664 + 22% of (gross - 40525)
+			federalO = (calculatedGross - (4807.50 + (FederalPercent * (calculatedGross - 41775.00))));
+		}
+		else if ((calculatedGross > 89075.00) && (calculatedGross < 170050.00)) {
+			FederalPercent = 0.24; // 14751 + 24% of (gross - 86375)
+			federalO = (calculatedGross - (15213.50 + (FederalPercent * (calculatedGross - 89075.00))));
+		}
+		else if ((calculatedGross > 170050.00) && (calculatedGross < 215950.00)) {
+			FederalPercent = 0.32; // 33603 + 32% of  (gross - 164925)
+			federalO = (calculatedGross - (34647.50 + (FederalPercent * (calculatedGross - 170050.00))));
+		}
+		else if ((calculatedGross > 215950.00) && (calculatedGross < 539900.00)) {
+			FederalPercent = .35; // 47843 + 35% of (gross - 209425)
+			federalO = (calculatedGross - (49335.50 + (FederalPercent * (calculatedGross - 215950.00))));
+		}
+		else {
+			if (calculatedGross > 539900.00) {
+				FederalPercent = .37; // 157804.25 +  37% of (gross - 523600)
+				federalO = (calculatedGross - (162718.00 + (FederalPercent * (calculatedGross - 539900.00))));
+			};
+		};
+	}
+
+
+	// MARRIED
+	if (isMarried) {
+		if (calculatedGross < 10275.00) {
+			FederalPercent = 0.10;
+			federalO = (calculatedGross - (FederalPercent * calculatedGross));
+		}
+		else if ((calculatedGross > 10275.00) && (calculatedGross < 41775)) {
+			FederalPercent = 0.12; // 995 + 12% of (gross - 9950)
+			federalO = (calculatedGross - (1027.50 + (FederalPercent * (calculatedGross - 10275.00))));
+		}
+		else if ((calculatedGross > 41775.00) && (calculatedGross < 89075.00)) {
+			FederalPercent = 0.22; // 4664 + 22% of (gross - 40525)
+			federalO = (calculatedGross - (4807.50 + (FederalPercent * (calculatedGross - 41775.00))));
+		}
+		else if ((calculatedGross > 89075) && (calculatedGross < 170050)) {
+			FederalPercent = 0.24; // 14751 + 24% of (gross - 86375)
+			federalO = (calculatedGross - (15213.50 + (FederalPercent * (calculatedGross - 89075))));
+		}
+		else if ((calculatedGross > 170050.00) && (calculatedGross < 215950.00)) {
+			FederalPercent = 0.32; // 33603 + 32% of  (gross - 164925)
+			federalO = (calculatedGross - (34647.50 + (FederalPercent * (calculatedGross - 170050))));
+		}
+		else if ((calculatedGross > 215950.00) && (calculatedGross < 323925.00)) {
+			FederalPercent = .35; // 47843 + 35% of (gross - 209425)
+			federalO = (calculatedGross - (49335.50 + (FederalPercent * (calculatedGross - 215950.00))));
+		}
+		else {
+			if (calculatedGross > 323925.00) {
+				FederalPercent = .37; // 157804.25 +  37% of (gross - 523600)
+				federalO = (calculatedGross - (86127.00 + (FederalPercent * (calculatedGross - 323925.00))));
+			};
+		};
+	}
+
+	double ss = calculatedGross - (calculatedGross * SOCIALPERCENT);
+	double mm = (calculatedGross * MEDICAREPERCENT);
+	double nfl = calculatedGross - (calculatedGross * FAMILYLEAVE);
+	double dd = calculatedGross - (calculatedGross * DIS);
+	double tax = IncomePercent + FederalPercent + SOCIALPERCENT + MEDICAREPERCENT + FAMILYLEAVE + DIS;
+	calculatedNet = calculatedGross - (calculatedGross * tax);
+
+}

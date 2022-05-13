@@ -10,7 +10,6 @@
 #include <sstream>
 #include <windows.h>
 
-#include "User.h"
 using namespace std;
 // ======================================================================================================================
 
@@ -22,7 +21,11 @@ private:
 	vector<int> commaDelimetedInt(string ll, char limit); // this method is use to get values from the text file
 	vector<int> clockInInfo;
 	vector<int> clockOutInfo;
-	vector<int> getCurrentDate();
+	vector<int> getCurrentTime();
+	void calcuteNetPay(bool isMarried);
+	//vector<double> computeTimeDifference(vector<int> clockOut, vector<int> clockIn);
+	double computeWorkedHours(vector<int> clockOut, vector<int> clockIn);
+	//User currentUser;
 public:
 	AppPages(string name);
 	void showMainPage();
@@ -31,6 +34,7 @@ public:
 	void showManagerPage();
 	void showOneTime();
 	void showEmployeePage();
-	void updateField(string lineToChange,int pos,string data,string  fromF, string toF);
+	double computeWorkedHours(vector<double> clockOut, vector<double> clockIn);
+	//void updateField(string lineToChange,int pos,string data,string  fromF, string toF);
 };
 
