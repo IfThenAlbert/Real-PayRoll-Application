@@ -29,6 +29,8 @@ private:
 public:
 	AppPages(string name);
 	void showMainPage();
+	void clockInScreen();
+	void paySalaryScreen();
 	void showLogInPage();
 	void showRegisterPage();
 	void showManagerPage();

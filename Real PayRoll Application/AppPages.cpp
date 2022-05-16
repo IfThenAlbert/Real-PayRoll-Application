@@ -10,7 +10,6 @@
 #include <sstream>
 #include <Windows.h>
 #include "User.h"
-
 using namespace std;
 // ======================================================================================================================
 
@@ -335,6 +334,7 @@ void AppPages::showManagerPage() {
 	This method is to show the screen for the logged in employee
 */
 void AppPages::showEmployeePage() {
+	system("CLS");
 
 	int choice = 0;
 	int exitChoice = 0;
@@ -356,12 +356,14 @@ void AppPages::showEmployeePage() {
 		cout << "\tEmployee Hourly Wage: $" << currentUser[4] << endl;
 		cout << "\tEmployee Username: " << currentUser[6] << endl;
 		cout << endl;
+		
+		cout << "SALARY EVERY: " << currentUser[2] << " - " << currentUser[5] << endl;
+		cout << "HOURS: " << stod(currentUser[9]) << endl;
+		cout << "Current Gross: $" << (stod(currentUser[9]) * stod(currentUser[4])) << endl;
 		cout << endl;
 
 		cout << "(1). CLOCK IN" << endl;
-		cout << "(2). CLOCK OUT" << endl;
-		
-
+		cout << "(2). VIEW PAY" << endl;
 		cout << "(3). Change Password" << endl;
 		cout << "(4). Quit" << endl;
 		cin >> choice;
@@ -369,94 +371,13 @@ void AppPages::showEmployeePage() {
 
 
 	if (choice == 1) {
-		this->clockInInfo = getCurrentTime(); 
-		string dummy = "";
-		cin >> dummy;
-		this->clockOutInfo = getCurrentTime();
-		cout << this->clockInInfo.at(1) << " -> " << this->clockOutInfo.at(1);
-		//double total = hoursThisShift + stod(currentUser.at(9));
-		//string data = to_string(total);
-		/*string employeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
-			"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
-			"," + currentUser.at(9);
-
-		string newEmployeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
-			"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
-			"," + data;
-
-
-		ifstream employeeReder;
-		vector<string> archive;
-		employeeReder.open("users_rpa.txt");
-		string line = "";
-		while (getline(employeeReder, line)) {
-			if (line != employeeInfo) {
-				archive.push_back(line);
-			};
-		};
-		employeeReder.close();
-		ofstream employeeReWriter;
-		employeeReWriter.open("users_rpa.txt");
-
-		if (archive.size() <= 0) {
-			employeeReWriter << "";
-		}
-		else {
-			for (int i = 0; i < archive.size(); i++) {
-				employeeReWriter << archive.at(i) << endl;
-			};
-		};
-		employeeReWriter.close();
-
-		cout << "HAVE A GOOD DAY THERE CREW !!!!" << endl;
-		isClockedIn = false;
-
-		isClockedIn = true;
-		*/
+		this->clockInScreen();
 	};
 
 	if (choice == 2) {
-		if (isClockedIn != false) {
-			this->clockOutInfo = getCurrentTime();
-			double hoursThisShift = this->computeWorkedHours(this->clockOutInfo,this->clockInInfo);
-			double total = hoursThisShift + stod(currentUser.at(9));
-			string data = "" + data;
-			string employeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
-				"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
-				"," + currentUser.at(9);
-
-			string newEmployeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
-				"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
-				"," +  data;
-
-
-			ifstream employeeReder;
-			vector<string> archive;
-			employeeReder.open("users_rpa.txt");
-			string line = "";
-			while (getline(employeeReder, line)) {
-				if (line != employeeInfo) {
-					archive.push_back(line);
-				};
-			};
-			employeeReder.close();
-			ofstream employeeReWriter;
-			employeeReWriter.open("users_rpa.txt");
-
-			if (archive.size() <= 0) {
-				employeeReWriter << "";
-			}
-			else {
-				for (int i = 0; i < archive.size(); i++) {
-					employeeReWriter << archive.at(i) << endl;
-				};
-			};
-
-			cout << "HAVE A GOOD DAY THERE CREW !!!!" << endl;
-			isClockedIn = false;
-		};
-	};
-
+		this->paySalaryScreen();
+	}
+	
 	if (choice == 3) {
 		string oldPassword = "C";
 
@@ -516,8 +437,75 @@ void AppPages::showEmployeePage() {
 		if (exitChoice == 2) {
 			this->showEmployeePage();
 		}
-
+		
 	};
+};
+
+void AppPages::paySalaryScreen() {
+	system("CLS");
+
+	cout << "THIS SCREEN SHOWS YOUR SALARY" << endl;
+	cout << "HOURS: " << currentUser[9] << endl;
+
+	cout << "PAYMENT EVERY: ";
+	if (currentUser[2] == "M") {
+		cout << "MONTH => " << currentUser[5] << " of the month" << endl;
+	}else {
+		cout << currentUser[5] << " of the week" << endl;
+	};
+
+	cout << "SALARY DAY/DATE: " << "d" << endl;
+	cout << "GROSS AS OF NOW: $" << (stod(currentUser[9]) * stod(currentUser[4])) << endl;
+	
+
+};
+
+// =====================================================================================
+void AppPages::clockInScreen() {
+	system("CLS");
+
+	time_t clockinTime;
+	time_t clockOutTime;
+	time(&clockinTime);
+
+	cout << "YOU ARE NOW CLOCKED IN !!!!" << endl;
+	cout << "Press any keys to clock out" << endl;
+	system("pause");
+
+	time(&clockOutTime);
+	double hours = difftime(clockOutTime, clockinTime) / 3600;
+
+	double total = hours + stod(currentUser.at(9));
+	string f = "" + to_string(total);
+	string employeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
+		"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
+		"," + currentUser.at(9);
+
+	string newEmployeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
+		"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
+		"," + f;
+
+
+	ifstream employeeReder;
+	vector<string> archive;
+	employeeReder.open("users_rpa.txt");
+	string line = "";
+	while (getline(employeeReder, line)) {
+		if (line != employeeInfo) {
+			archive.push_back(line);
+		};
+	};
+	employeeReder.close();
+	ofstream employeeReWriter;
+	employeeReWriter.open("users_rpa.txt");
+	for (int i = 0; i < archive.size(); i++) {
+		employeeReWriter << archive.at(i) << endl;
+	};
+	employeeReWriter << newEmployeeInfo << endl;
+	employeeReWriter.close();
+
+
+	this->showEmployeePage();
 };
 
 // <OTHERS> 
@@ -546,17 +534,18 @@ vector<int> AppPages::commaDelimetedInt(string ll, char limit) {
 };
 
 vector<int> AppPages::getCurrentTime() {
+	
 	vector<int> results;
 	char str[26];
 	time_t result = time(NULL);
 	ctime_s(str, sizeof str, &result);
-	results = commaDelimetedInt(commaDelimetedString(str,' ').at(4), ':');
+	results = commaDelimetedInt(commaDelimetedString(str,' ').at(3), ':');
 	return results;
 }
 
 double AppPages::computeWorkedHours(vector<int> clockOut, vector<int> clockIn) {
-	double result;
-	vector<double> diffResult;
+	int result;
+	vector<int> diffResult;
 	// hh mm ss
 	if (clockIn.at(2) > clockOut.at(2)) // sec
 	{
