@@ -8,10 +8,13 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <cstdio>
 #include <Windows.h>
 #include "User.h"
 using namespace std;
 // ======================================================================================================================
+// // FIRST , LAST, USER , PASS, MANAGER UNDER,  MARRIED - SINGLE, TITLE, WEEK/MONTHLY, D-M, RATE,HOURS \\ \\
+
 
 AppPages::AppPages(string name) {
 	this->appName = name;
@@ -73,11 +76,12 @@ void AppPages::showLogInPage() {
 		while (getline(userFilesReader, lined)) {
 			vector<string> targetUser = this->commaDelimetedString(lined,',');  // store all the user creds here
 			
-			if ((userName._Equal(targetUser.at(6)) ) && (passWord._Equal(targetUser.at(7)))) {
+			if ((userName._Equal(targetUser.at(2)) ) && (passWord._Equal(targetUser.at(3)))) {
 				this->currentUser = targetUser;
 
-
-				if (targetUser.at(2) == "manager") {
+				userFilesReader.close();
+				employeeFilesReader.close();
+				if (targetUser.at(6) == "manager") {
 					this->showManagerPage();
 				}else {
 					this->showEmployeePage();
@@ -89,7 +93,7 @@ void AppPages::showLogInPage() {
 		while (getline(employeeFilesReader, lined)) {
 			vector<string> targetUser = this->commaDelimetedString(lined,',');  // store all the user creds here
 
-			if ((userName._Equal(targetUser.at(6))) && (passWord._Equal(targetUser.at(7)))) {
+			if ((userName._Equal(targetUser.at(2))) && (passWord._Equal(targetUser.at(3)))) {
 				this->currentUser = targetUser;
 				if (passWord == "app123") {
 					this->showOneTime();
@@ -163,10 +167,10 @@ void AppPages::showOneTime() {
 
 // this screen is for the register screen
 void AppPages::showRegisterPage() {
-	string nManagerFirst, nManagerLast, nManagerUser, nManagerPass,dummy;
+	string nManagerFirst, nManagerLast, nManagerUser, nManagerPass, dummy,nManagerMarriedSingle;
 	double hourlyPay;
 	ofstream generalManagerWriter;
-	generalManagerWriter.open("users_rpa.txt",ios::app);
+	generalManagerWriter.open("users_rpa.txt", ios::app);
 
 	cout << "@@=================================================@@" << endl;
 	cout << "NOTE: ONLY MANAGERS CAN REGISTER " << endl;
@@ -186,15 +190,17 @@ void AppPages::showRegisterPage() {
 
 	system("CLS");
 	if (generalManagerWriter.is_open()) {
-		generalManagerWriter << nManagerFirst << "," << nManagerLast << "," << "manager," << hourlyPay << "," << nManagerUser << ","
-			<< nManagerPass << ",M123M" << endl;
+		generalManagerWriter << nManagerFirst << "," << nManagerLast << "," << nManagerUser << "," << nManagerPass << "," << "M123M" << "," << nManagerMarriedSingle << "," <<
+			"manager" << "," << "weekly" << "," << "monday" << "," << hourlyPay << "," << "0.0" << endl;
+
 		cout << "YOU ARE NOW REGISTERED !!!" << endl;
+		generalManagerWriter.close();
 		system("pause");
 		this->showMainPage();
 	};
-	
-	 
-}
+
+
+};
 
 // this screeen is for the logged in manager screen
 void AppPages::showManagerPage() {
@@ -206,8 +212,9 @@ void AppPages::showManagerPage() {
 		cout << "@@=================================================@@" << endl;
 		cout << setw(35) << currentUser[0] << endl;
 		cout << "(1): ADD EMPLOYEE" << endl;
-		cout << "(2): VIEW MY EMPLOYEES" << endl;
-		cout << "(3): LOG OUT" << endl;
+		cout << "(2): VIEW SALARY" << endl;
+		cout << "(3): VIEW MY EMPLOYEES" << endl;
+		cout << "(4): LOG OUT" << endl;
 		cin >> managerChoice;
 		cout << "" << endl;
 	};
@@ -239,8 +246,6 @@ void AppPages::showManagerPage() {
 			cout << "Last name: ";
 			cin >> employeeLast;
 
-			//cout << "Create username for this employee: ";
-			//cin >> employeeUser;
 			employeeUser = employeeFirst + employeeLast;
 			cout << "Employee Username: " << employeeUser << endl; 
 			cout << "Temporrary Log In Password: app123" << endl;
@@ -281,7 +286,8 @@ void AppPages::showManagerPage() {
 			}else {
 				vv = monthlyPayDay;
 			};
-
+			
+			 
 			cout << "@@=================================================@@" << endl;
 			cout << "enter 1 to edit or enter 0 to add this employee: ";
 			cin >> isFinish;
@@ -290,12 +296,9 @@ void AppPages::showManagerPage() {
 
 
 		if (createEmployee.is_open()) {
-			// Manager under,First,Last,hourly,username,password
-			
-			// FIRST NAME, LAST NAME, MARRIED/SINGLE, TITLE, RATE, M/W, USERNAME, PASSWORD
-			
-			createEmployee << employeeFirst << "," << employeeLast << "," << marriedSingle << "," <<
-				employeeTitle << "," << employeeHourlyRate << "," << vv << "," << employeeUser << "," << employeePass << "," << currentUser[0];
+			// FIRST , LAST, USER , PASS, MANAGER UNDER,  MARRIED - SINGLE, TITLE, WEEK/MONTHLY, D-M, RATE,HOURS
+			createEmployee << employeeFirst << "," << employeeLast << "," << employeeUser << "," <<
+				employeePass << "," << currentUser[0] << "," << marriedSingle << "," << employeeTitle  << ","  << vv <<"," << employeeHourlyRate << "," << "0.00";
 			createEmployee.close();
 			system("CLS");
 			cout << "AN EMPLOYEE HAS BEEN ADDED!!!" << endl;
@@ -305,15 +308,15 @@ void AppPages::showManagerPage() {
 
 	}else if (managerChoice ==2) {
 		ifstream employeeView;
-		employeeView.open("tmp_users_rpa.txt");
+		employeeView.open("users_rpa.txt");
 
 		if (employeeView.is_open()) {
 			string data;
 			while (getline(employeeView, data)) {
 				vector<string> employeeInfo = commaDelimetedString(data,',');
-				//if (employeeInfo[6] == currentUser[0]) {
-				//	cout << "Employee Name: " << employeeInfo[0] << " Last Name: " << employeeInfo[1] << " [" << employeeInfo[2] << "] $" << employeeInfo[3] << endl;
-				//};
+				if (employeeInfo[8] == currentUser[0]) {
+					cout << "Employee Name: " << employeeInfo[0] << " Last Name: " << employeeInfo[1] << " [" << employeeInfo[3] << "] $" << employeeInfo[4] << endl;
+				};
 			};
 		};
 		employeeView.close();
@@ -321,8 +324,10 @@ void AppPages::showManagerPage() {
 		system("pause");
 		this->showManagerPage();
 	}
-	else {
-		//this->currentUser.clear();
+	else if (managerChoice == 3) {
+
+	}else {
+		// show the main page (log out)
 		this->showMainPage();
 	};
 
@@ -342,24 +347,33 @@ void AppPages::showEmployeePage() {
 	string passwordCheck;
 	string newPassword;
 	string newPasswordCheck;
-	//string oldPassword = currentUser[5];
+	string oldPassword = currentUser[3];
 
 
-	while (choice != 1 && choice != 2) { // shows employee information
+	while (choice < 1 || choice > 4) { // shows employee information
 		//vector<int> cd = this->getCurrentDate();
 		system("CLS");
 		cout << "@@=================================================@@" << endl;
 		cout << setw(35) << "Employee Page" << endl;
 		cout << endl;
 		cout << "\tEmployee name: " << currentUser[0] << " " << currentUser[1] << endl;
-		cout << "\tEmployee title: " << currentUser[3] << endl;
-		cout << "\tEmployee Hourly Wage: $" << currentUser[4] << endl;
-		cout << "\tEmployee Username: " << currentUser[6] << endl;
+		cout << "\tEmployee title: " << currentUser[6] << endl;
+		cout << "\tEmployee Hourly Wage: $" << currentUser[9] << endl;
+		cout << "\tEmployee Username: " << currentUser[2] << endl;
 		cout << endl;
 		
-		cout << "SALARY EVERY: " << currentUser[2] << " - " << currentUser[5] << endl;
-		cout << "HOURS: " << stod(currentUser[9]) << endl;
-		cout << "Current Gross: $" << (stod(currentUser[9]) * stod(currentUser[4])) << endl;
+		cout << "\tSALARY EVERY: " << currentUser[7] << " - " << currentUser[8] << endl;
+		cout << "\tHOURS: " << stod(currentUser[10]) << endl;
+		double extraOver = stod(currentUser[10]) - 40;
+		double gross = (stod(currentUser[10]) * stod(currentUser[9]));
+		cout << "\tGROSS ";
+		if (extraOver <0) {
+			cout << "(NO OVER TIME) $" << gross << endl;
+		}else {
+			gross += (extraOver * stod(currentUser[4]));
+			cout << "(WITH OVER TIME) $" << gross  << endl;
+		};
+
 		cout << endl;
 
 		cout << "(1). CLOCK IN" << endl;
@@ -379,9 +393,121 @@ void AppPages::showEmployeePage() {
 	}
 	
 	if (choice == 3) {
-		string oldPassword = "C";
+
+		string lineToChange = this->currentUser[0] + "," + this->currentUser[1] + "," + this->currentUser[2] + ","
+			+ this->currentUser[3] + "," + this->currentUser[4] + "," + this->currentUser[5] + "," + this->currentUser[6] + "," + this->currentUser[7] + "," + this->currentUser[8] + "," + this->currentUser[9] + "," +this->currentUser[10];
+		string newData = this->currentUser[0] + "," + this->currentUser[1] + "," + this->currentUser[2] +","; //"," + this->currentUser[4] + "," + this->currentUser[5] + "," + this->currentUser[6] + "," + this->currentUser[7] + "," + this->currentUser[8];
+		string line = "";
+		string userLine = "";
+		ofstream temporaryFileWrite;
+		ifstream usersFile;
+
+		// opens the text file that will be use to change values
+		temporaryFileWrite.open("password_change.txt", ios::app);
+
+		// open user file
+		usersFile.open("users_rpa.txt");
 
 		do { // changing password algorithm
+			system("CLS");
+
+			cout << "Enter old password: ";
+			cin >> passwordCheck;
+
+			if (passwordCheck.compare(oldPassword) != 0) {
+
+				cout << "Passwords do not match, try again." << endl;
+				cout << endl;
+				system("pause");
+			}
+
+		} while (passwordCheck.compare(oldPassword) != 0);
+
+
+		do {
+
+			cout << endl;
+			cout << "Enter new password: ";
+			cin >> newPassword;
+
+			cout << "Re-enter new password: ";
+			cin >> newPasswordCheck;
+
+			if (newPassword.compare(newPasswordCheck) != 0) {
+				cout << "Passwords do not match, try again." << endl;
+				cout << endl;
+				system("pause");
+				system("CLS");
+			}
+
+			if (newPassword.compare(oldPassword) == 0) {
+				cout << "New password cannot be the same as the old!" << endl;
+				cout << endl;
+				system("pause");
+				system("CLS");
+			}
+
+		} while (newPassword.compare(newPasswordCheck) != 0 && newPassword.compare(oldPassword) == 0);
+
+		// add the new password to the new data
+		newData += newPassword + "," + this->currentUser[4] + "," + this->currentUser[5] + "," + this->currentUser[6] + "," + this->currentUser[7] + "," + this->currentUser[8] + "," + this->currentUser[9] + "," + this->currentUser[10] + "\n";
+			
+			//this->currentUser[0] + "," + this->currentUser[1] + "," + this->currentUser[2] + "," + newPassword +
+			//"," + this->currentUser[4] + "," + this->currentUser[5] + "," + this->currentUser[6] + "," + this->currentUser[7] + "," + this->currentUser[8];
+
+
+		// copy contents to new file
+
+		while (getline(usersFile, line)) {
+			if (line != lineToChange) {
+				temporaryFileWrite << line << endl;
+			}
+			else {
+				temporaryFileWrite << newData << endl;
+			}
+		}
+
+		temporaryFileWrite.close();
+		usersFile.close();
+
+		// checks if the files are open
+		if (temporaryFileWrite.is_open()) {
+			cout << "Error: File is still opened, cannot modify passwords." << endl;
+		}
+
+		if (!temporaryFileWrite.is_open()) {
+			cout << "";
+		}
+
+		if (usersFile.is_open()) {
+			cout << "Error: File is still opened, cannot modify passwords." << endl;
+		}
+		if (!usersFile.is_open()) {
+			cout << "";
+		}
+
+		remove("users_rpa.txt"); // remove the files
+		// system("pause");
+
+
+		if (remove("users_rpa.txt") == 0) { // final check if user is removed
+
+			cout << "fred" << endl;
+
+		}
+		currentUser[5] = newPassword; // makes sure the password is changed
+
+		rename("password_change.txt", "users_rpa.txt"); // rename the file so that the password change is successful
+
+		cout << endl;
+		cout << "Passwords have been changed." << endl;
+		cout << "Please re-login with your new password." << endl;
+		cout << endl;
+		system("pause");
+
+		this->showMainPage();
+		
+/*		do { // changing password algorithm
 			system("CLS");
 			cout << "Enter old password: ";
 			cin >> passwordCheck;
@@ -394,8 +520,6 @@ void AppPages::showEmployeePage() {
 			}
 
 		} while (passwordCheck.compare(oldPassword) != 0);
-
-
 
 		do {
 
@@ -422,6 +546,9 @@ void AppPages::showEmployeePage() {
 
 		cout << "Passwords have been changed! Don't forget it!" << endl;
 		this->showEmployeePage();
+		*/
+
+
 	}
 
 	if (choice == 4) { // exit choice
@@ -432,6 +559,7 @@ void AppPages::showEmployeePage() {
 		cin >> exitChoice;
 
 		if (exitChoice == 1) {
+			this->currentUser.clear();
 			this->showMainPage();
 		}
 		if (exitChoice == 2) {
