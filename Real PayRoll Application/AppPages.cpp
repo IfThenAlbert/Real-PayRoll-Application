@@ -113,6 +113,7 @@ void AppPages::showOneTime() {
 	vector<string> archive;
 	string passy = "app123";
 	string lineToChange = this->currentUser[0] + "," + this->currentUser[1] + "," + this->currentUser[2] + "," +
+
 		this->currentUser[3] + "," + this->currentUser[4] + "," + this->currentUser[5] + "," + this->currentUser[6];
 	string newData = this->currentUser[0] + "," + this->currentUser[1] + "," + this->currentUser[2] + "," +
 		this->currentUser[3] + "," + this->currentUser[4] + ",";
@@ -183,6 +184,13 @@ void AppPages::showRegisterPage() {
 	cin >> nManagerUser;
 	cout << "Create a password: ";
 	cin >> nManagerPass;
+	string ww;
+	cout << "paid monthly or weekly: ";
+	cin >> ww;
+
+	int d;
+	cout << "Every (days of week ex 1 - 7/ date montly ex 1-31)";
+	cin >> d;
 
 	cout << "Hourly pay: ";
 	cin >> hourlyPay;
@@ -191,7 +199,7 @@ void AppPages::showRegisterPage() {
 	system("CLS");
 	if (generalManagerWriter.is_open()) {
 		generalManagerWriter << nManagerFirst << "," << nManagerLast << "," << nManagerUser << "," << nManagerPass << "," << "M123M" << "," << nManagerMarriedSingle << "," <<
-			"manager" << "," << "weekly" << "," << "monday" << "," << hourlyPay << "," << "0.0" << endl;
+			"manager" << "," << ww << "," << d << "," << hourlyPay << "," << "0.0" << endl;
 
 		cout << "YOU ARE NOW REGISTERED !!!" << endl;
 		generalManagerWriter.close();
@@ -362,17 +370,7 @@ void AppPages::showEmployeePage() {
 		cout << "\tEmployee Username: " << currentUser[2] << endl;
 		cout << endl;
 		
-		cout << "\tSALARY EVERY: " << currentUser[7] << " - " << currentUser[8] << endl;
-		cout << "\tHOURS: " << stod(currentUser[10]) << endl;
-		double extraOver = stod(currentUser[10]) - 40;
-		double gross = (stod(currentUser[10]) * stod(currentUser[9]));
-		cout << "\tGROSS ";
-		if (extraOver <0) {
-			cout << "(NO OVER TIME) $" << gross << endl;
-		}else {
-			gross += (extraOver * stod(currentUser[4]));
-			cout << "(WITH OVER TIME) $" << gross  << endl;
-		};
+
 
 		cout << endl;
 
@@ -573,19 +571,31 @@ void AppPages::paySalaryScreen() {
 	system("CLS");
 
 	cout << "THIS SCREEN SHOWS YOUR SALARY" << endl;
-	cout << "HOURS: " << currentUser[9] << endl;
+	cout << "\tSALARY EVERY: " << currentUser[7] << " - " << currentUser[8] << endl;
+	cout << "\tHOURS: " << stod(currentUser[10]) << endl;
+	double extraOver = stod(currentUser[10]) - 40;
+	double gross = (stod(currentUser[10]) * stod(currentUser[9]));
+	cout << "\tGROSS ";
+	if (extraOver < 0) {
+		cout << "(NO OVER TIME) $" << gross << endl;
+	}
+	else {
+		gross += (extraOver * stod(currentUser[4]));
+		cout << "(WITH OVER TIME) $" << gross << endl;
+	};
+	cout << endl;
 
 	cout << "PAYMENT EVERY: ";
-	if (currentUser[2] == "M") {
-		cout << "MONTH => " << currentUser[5] << " of the month" << endl;
+	if (currentUser[7] == "monthly") {
+		cout << "MONTH => " << currentUser[8] << " of the month" << endl;
 	}else {
-		cout << currentUser[5] << " of the week" << endl;
+		cout << currentUser[8] << " of the week" << endl;
 	};
 
-	cout << "SALARY DAY/DATE: " << "d" << endl;
-	cout << "GROSS AS OF NOW: $" << (stod(currentUser[9]) * stod(currentUser[4])) << endl;
 	
-
+	if (getCurrentDay() == currentUser[8]) {
+		calcuteNetPay(currentUser[5],gross);
+	}
 };
 
 // =====================================================================================
@@ -596,44 +606,61 @@ void AppPages::clockInScreen() {
 	time_t clockOutTime;
 	time(&clockinTime);
 
+	//ofstream temporaryFileWrite;
+
 	cout << "YOU ARE NOW CLOCKED IN !!!!" << endl;
 	cout << "Press any keys to clock out" << endl;
 	system("pause");
 
 	time(&clockOutTime);
-	double hours = difftime(clockOutTime, clockinTime) / 3600;
+	double hours = difftime(clockOutTime, clockinTime) ;
 
-	double total = hours + stod(currentUser.at(9));
-	string f = "" + to_string(total);
+	double total = hours + stod(currentUser.at(10));
+	string f = to_string(total);
 	string employeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
 		"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
-		"," + currentUser.at(9);
+		"," + currentUser.at(9) + "," + currentUser.at(10);
 
 	string newEmployeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
 		"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
-		"," + f;
+		"," + currentUser.at(9) + "," + f;
+
+	//temporaryFileWrite.open("temporary_users_rpa_clockinout.txt",ios::app);
+
 
 
 	ifstream employeeReder;
 	vector<string> archive;
 	employeeReder.open("users_rpa.txt");
 	string line = "";
+
+/*	while (getline(employeeReder, line)) {
+		if (line != employeeInfo) {
+			temporaryFileWrite << line << endl;
+		}else {
+			temporaryFileWrite << newEmployeeInfo << endl;
+		};
+	}*/
+
 	while (getline(employeeReder, line)) {
 		if (line != employeeInfo) {
 			archive.push_back(line);
 		};
 	};
+
 	employeeReder.close();
-	ofstream employeeReWriter;
+		ofstream employeeReWriter;
 	employeeReWriter.open("users_rpa.txt");
-	for (int i = 0; i < archive.size(); i++) {
-		employeeReWriter << archive.at(i) << endl;
-	};
+
+		for (int i = 0; i < archive.size(); i++) {
+			employeeReWriter << archive.at(i) << endl;
+		};
+
 	employeeReWriter << newEmployeeInfo << endl;
 	employeeReWriter.close();
 
-
-	this->showEmployeePage();
+	this->currentUser.clear();
+	this->showMainPage();
 };
 
 // <OTHERS> 
@@ -660,6 +687,15 @@ vector<int> AppPages::commaDelimetedInt(string ll, char limit) {
 	};
 	return res;
 };
+
+string AppPages::getCurrentDay() {
+	string res = "";
+	char str[26];
+	time_t result = time(NULL);
+	ctime_s(str, sizeof str, &result);
+	res = commaDelimetedString(str, ' ').at(0);
+	return res;
+}
 
 vector<int> AppPages::getCurrentTime() {
 	
@@ -693,8 +729,8 @@ double AppPages::computeWorkedHours(vector<int> clockOut, vector<int> clockIn) {
 	return result;
 };
 
-void AppPages::calcuteNetPay(bool isMarried) {
-	double calculatedGross = 200.00;
+void AppPages::calcuteNetPay(string marriedSingle,double gg) {
+	double calculatedGross = gg;
 	double calculatedNet = 0.0;
 	double IncomePercent, incomeO;
 	double FederalPercent, federalO;
@@ -747,7 +783,7 @@ void AppPages::calcuteNetPay(bool isMarried) {
 	};
 
 	//logic for federal tax  SINGLE
-	if (isMarried == false) {
+	if (marriedSingle == "single") {
 		if (calculatedGross < 10275.00) {
 			FederalPercent = 0.10;
 			federalO = (calculatedGross - (FederalPercent * calculatedGross));
@@ -782,7 +818,7 @@ void AppPages::calcuteNetPay(bool isMarried) {
 
 
 	// MARRIED
-	if (isMarried) {
+	if (marriedSingle == "married") {
 		if (calculatedGross < 10275.00) {
 			FederalPercent = 0.10;
 			federalO = (calculatedGross - (FederalPercent * calculatedGross));

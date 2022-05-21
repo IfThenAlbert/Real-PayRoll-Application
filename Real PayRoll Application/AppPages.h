@@ -22,13 +22,14 @@ private:
 	vector<int> clockInInfo;
 	vector<int> clockOutInfo;
 	vector<int> getCurrentTime();
-	void calcuteNetPay(bool isMarried);
+	void calcuteNetPay(string marriedSingle, double gg);
 	//vector<double> computeTimeDifference(vector<int> clockOut, vector<int> clockIn);
 	double computeWorkedHours(vector<int> clockOut, vector<int> clockIn);
 	//User currentUser;
 public:
 	AppPages(string name);
 	void showMainPage();
+	string getCurrentDay();
 	void clockInScreen();
 	void paySalaryScreen();
 	void showLogInPage();
