@@ -504,48 +504,6 @@ void AppPages::showEmployeePage() {
 		system("pause");
 
 		this->showMainPage();
-		
-/*		do { // changing password algorithm
-			system("CLS");
-			cout << "Enter old password: ";
-			cin >> passwordCheck;
-
-			if (passwordCheck.compare(oldPassword) != 0) {
-			
-				cout << "Passwords do not match, try again." << endl;
-				cout << endl;
-				system("pause");
-			}
-
-		} while (passwordCheck.compare(oldPassword) != 0);
-
-		do {
-
-			cout << endl;
-			cout << "Enter new password: ";
-			cin >> newPassword;
-
-			cout << "Re-enter new password: ";
-			cin >> newPasswordCheck;
-
-			if (newPassword.compare(newPasswordCheck) != 0) {
-				cout << "Passwords do not match, try again." << endl;
-				cout << endl;
-				system("pause");
-			}
-
-			if (newPassword.compare(oldPassword) == 0) {
-				cout << "New password cannot be the same as the old!" << endl;
-				cout << endl;
-				system("pause");
-			}
-
-		} while (newPassword.compare(newPasswordCheck) != 0 && newPassword.compare(oldPassword) == 0);
-
-		cout << "Passwords have been changed! Don't forget it!" << endl;
-		this->showEmployeePage();
-		*/
-
 
 	}
 
@@ -566,7 +524,77 @@ void AppPages::showEmployeePage() {
 		
 	};
 };
+/*
+void AppPages::clockInScreen() { // clocking in
+	system("CLS");
 
+	string dummy;
+
+	time_t clockinTime;
+	time_t clockOutTime;
+	time(&clockinTime);
+
+	cout << "Clock in successful at " << this->getSystemTime() << "." << endl;
+	cout << "Press any key to clock out." << endl;
+	system("pause");
+	string passwordVer;
+	cout << "Please enter your pasword for verification: ";
+	cin >> passwordVer;
+
+	time(&clockOutTime);
+	if (passwordVer == currentUser[3]) {
+		cout << "Clocking you out...." << endl;
+		this->showClockOut();
+		system("pause");
+
+
+		double hours = difftime(clockOutTime, clockinTime) / 1;
+
+		double total = hours + stod(currentUser.at(9));
+		string f = "" + to_string(total);
+		string employeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
+			"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
+			"," + currentUser.at(9) + "," + currentUser.at(10);
+
+		string newEmployeeInfo = currentUser.at(0) + "," + currentUser.at(1) + "," + currentUser.at(2) + "," + currentUser.at(3) +
+			"," + currentUser.at(4) + "," + currentUser.at(5) + "," + currentUser.at(6) + "," + currentUser.at(7) + "," + currentUser.at(8) +
+			"," + currentUser.at(9) + "," + f;
+
+
+		ifstream employeeReder;
+		vector<string> archive;
+		employeeReder.open("users_rpa.txt");
+		string line = "";
+		while (getline(employeeReder, line)) {
+			if (line != employeeInfo) {
+				archive.push_back(line);
+			};
+		};
+		employeeReder.close();
+		ofstream employeeReWriter;
+		employeeReWriter.open("user_change.txt");
+		for (int i = 0; i < archive.size(); i++) {
+			employeeReWriter << archive.at(i) << endl;
+		};
+		employeeReWriter << newEmployeeInfo << endl;
+
+		employeeReWriter.close();
+
+		remove("users_rpa.txt");
+		rename("user_change.txt", "users_rpa.txt");
+
+
+		this->showClockOut();
+	}else {
+		this->showEmployeePage();
+	};
+
+	return;
+
+};
+
+
+*/
 void AppPages::paySalaryScreen() {
 	system("CLS");
 
@@ -857,5 +885,10 @@ void AppPages::calcuteNetPay(string marriedSingle,double gg) {
 	double dd = calculatedGross - (calculatedGross * DIS);
 	double tax = IncomePercent + FederalPercent + SOCIALPERCENT + MEDICAREPERCENT + FAMILYLEAVE + DIS;
 	calculatedNet = calculatedGross - (calculatedGross * tax);
+	cout << "DISABILITY: $" << dd << endl;
+	cout << "FEDERAL: $" << federalO << endl;
+	cout << "INCOME: $" << incomeO << endl;
+
+	cout << "$" << calculatedNet;
 
 }
